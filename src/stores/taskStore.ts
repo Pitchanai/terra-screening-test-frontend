@@ -1,8 +1,10 @@
 import { makeAutoObservable } from 'mobx'
+import { uuid } from 'uuidv4'
 
 import { ColumnData, BoardData } from 'types/types'
+import { cloneDeep } from 'lodash'
 
-const BOARD_DATA_KEY = 'BOARDDATA'
+const BOARD_DATA_KEY = 'BOARD_DATA'
 const COLUMN_DATA_KEY = 'COLUMN_DATA'
 
 export class TaskStore {
@@ -11,13 +13,12 @@ export class TaskStore {
 
   constructor() {
     this.columns = {}
-
-    this.loadStore()
+    this.boards = {}
 
     makeAutoObservable(this)
   }
 
-  private loadStore = () => {
+  public loadStore = () => {
     try {
       const loadedBoardData: Record<string, BoardData> = JSON.parse(localStorage.getItem(BOARD_DATA_KEY) ?? '{}')
       this.boards = loadedBoardData
@@ -44,6 +45,18 @@ export class TaskStore {
       const columnKey = `${COLUMN_DATA_KEY}:${key}`
       localStorage.setItem(columnKey, JSON.stringify(value))
     }
+  }
+
+  public createNewBoard = (name: string) => {
+    const newUuid = uuid()
+    const newBoards = cloneDeep(this.boards)
+
+    newBoards[newUuid] = {
+      label: name,
+      columnIds: [],
+    }
+
+    this.boards = newBoards
   }
 }
 
