@@ -13,6 +13,7 @@
     "@emotion/styled": "^11.6.0",
     "@mui/icons-material": "^5.4.2",
     "@mui/material": "^5.4.2",
+    "@types/react-beautiful-dnd": "^13.1.2",
     "lodash": "^4.17.21",
     "mobx": "^6.4.0",
     "mobx-react-lite": "^3.3.0",

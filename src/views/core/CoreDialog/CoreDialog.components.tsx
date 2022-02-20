@@ -5,9 +5,9 @@ export const StyledCloseButton = styled(Button)(() => ({
   width: '36px !important',
   height: '36px !important',
   position: 'absolute',
-  top: 0,
-  right: 0,
-  transform: 'translate(50%, -50%)',
+  top: 8,
+  right: 8,
+  // transform: 'translate(50%, -50%)',
   boxSizing: 'border-box',
   borderRadius: '50%',
   backgroundColor: '#3e3e3e',
@@ -27,6 +27,7 @@ export const StyledDialog = styled(Dialog)(({ theme }) => ({
     alignItems: 'center',
     textAlign: 'center',
     padding: '16px 8px',
+    overflowY: 'scroll',
 
     [theme.breakpoints.down('xs')]: {
       minWidth: 0,
