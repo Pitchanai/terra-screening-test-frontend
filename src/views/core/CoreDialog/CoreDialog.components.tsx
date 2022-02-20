@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogTitle, DialogContent, styled } from '@mui/material'
+import { Button, Dialog, styled } from '@mui/material'
 
 export const StyledCloseButton = styled(Button)(() => ({
   minWidth: 0,
