@@ -5,12 +5,10 @@ import { observer } from 'mobx-react-lite'
 
 import { taskStore } from 'stores/taskStore'
 
-import type { BoardData, TaskData } from 'types/types'
-
-import { dialogStore } from 'stores/dialogStore'
+import type { BoardData } from 'types/types'
 
 import { TaskColumn } from 'views/pages/homepage/components/TaskColumn/TaskColumn'
-import { CreateNewBoardDialog } from 'views/pages/homepage/components/CreateBoardDialog/CreateBoardDialog'
+import { CreateNewDialog } from 'views/pages/homepage/components/CreateNewDialog/CreateNewDialog'
 
 import { Root } from './HomePage.components'
 
@@ -18,28 +16,20 @@ export const HomePage = observer(() => {
   const [isBrowser, setIsBrowser] = useState(false)
   const [selectedBoard, setSelectedBoard] = useState<string | undefined>()
 
-  const handleOnDragEnd = (result: DropResult) => {
-    console.log('result', result)
-    if (!result.destination) return
+  const handleOnDragEnd = ({ source, destination, draggableId }: DropResult) => {
+    if (!destination || !source || !draggableId) return
 
-    // if (result.destination.droppableId === 'test') {
-    //   const items = cloneDeep(contents)
-    //   const [reorderedItem] = items.splice(result.source.index, 1)
-    //   items.splice(result.destination.index, 0, reorderedItem)
-
-    //   setContents(items)
-    // } else if (result.destination.droppableId === 'test2') {
-    //   const items = cloneDeep(contents2)
-    //   const [reorderedItem] = items.splice(result.source.index, 1)
-    //   items.splice(result.destination.index, 0, reorderedItem)
-
-    //   setContents2(items)
-    // }
+    taskStore.onDragEnded(source, destination, draggableId)
   }
 
   const handleCreateNewBoard = (name: string) => {
     const newBoardId = taskStore.createNewBoard(name)
     setSelectedBoard(newBoardId)
+  }
+
+  const handleCreateNewColumn = (name: string) => {
+    if (!selectedBoard) return
+    taskStore.createNewColumn(name, selectedBoard)
   }
 
   /**
@@ -66,14 +56,36 @@ export const HomePage = observer(() => {
     <Root>
       <Box sx={{ height: '100%', width: '100%', maxHeight: '100%' }}>
         {Object.keys(taskStore.boards).length === 0 ? (
-          <Button onClick={() => CreateNewBoardDialog({ onConfirm: handleCreateNewBoard })}>Create New Board</Button>
+          <Button onClick={() => CreateNewDialog({ type: 'board', onConfirm: handleCreateNewBoard })}>
+            Create New Board
+          </Button>
         ) : isBrowser ? (
           <DragDropContext onDragEnd={handleOnDragEnd}>
-            <Button onClick={() => CreateNewBoardDialog({ onConfirm: handleCreateNewBoard })}>Create New Board</Button>
+            <Button onClick={() => CreateNewDialog({ type: 'board', onConfirm: handleCreateNewBoard })}>
+              Create New Board
+            </Button>
             {selectedBoard && <Typography>Board: {taskStore.boards[selectedBoard].label}</Typography>}
-            <Box sx={{ display: 'flex', rowGap: 16, columnGap: 16, height: '100%', width: '100%', maxHeight: '100%' }}>
-              {/* <TaskColumn droppableId="test" tasks={contents} /> */}
-              {/* <TaskColumn droppableId="test2" tasks={contents2} /> */}
+            <Box
+              sx={{
+                display: 'flex',
+                rowGap: 4,
+                columnGap: 4,
+                height: '100%',
+                width: '100%',
+                maxHeight: '100%',
+                overflowX: 'auto',
+              }}
+            >
+              {selectedBoard &&
+                taskStore.boards[selectedBoard].columnIds.map((columnId) => (
+                  <TaskColumn columnId={columnId} key={columnId} tasks={taskStore.columns[columnId]?.tasks ?? []} />
+                ))}
+              <Box>
+                <Typography>Create new column</Typography>
+                <Button onClick={() => CreateNewDialog({ type: 'column', onConfirm: handleCreateNewColumn })}>
+                  Create
+                </Button>
+              </Box>
             </Box>
           </DragDropContext>
         ) : null}
