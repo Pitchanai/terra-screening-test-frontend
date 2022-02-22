@@ -50,6 +50,7 @@ export class TaskStore {
       console.error(e)
       this.boards = {}
     }
+
     this.saveStore()
     this.isReady = true
   }
@@ -106,8 +107,6 @@ export class TaskStore {
     const newUuid = uuid()
     const newColumns = cloneDeep(this.columns)
 
-    console.log('createNewTask', name, description, isOpen, columnId, newColumns)
-
     newColumns[columnId].tasks.push({
       id: newUuid,
       name,
@@ -147,13 +146,14 @@ export class TaskStore {
     this.saveStore()
   }
 
-  public onDragEnded = (source: DraggableLocation, destination: DraggableLocation, draggableId: string): void => {
+  public onDragTaskEnded = (source: DraggableLocation, destination: DraggableLocation, draggableId: string): void => {
     const newColumn = cloneDeep(this.columns)
     const newSourceColumn = newColumn[source.droppableId]
-    const newDestinationColumn =
-      source.droppableId === destination.droppableId ? newSourceColumn : newColumn[destination.droppableId]
+    const sameColumn = source.droppableId === destination.droppableId
+    const newDestinationColumn = sameColumn ? newSourceColumn : newColumn[destination.droppableId]
 
     const [draggedItem] = newSourceColumn.tasks.splice(source.index, 1)
+
     if (draggedItem.id !== draggableId) return
     newDestinationColumn.tasks.splice(destination.index, 0, draggedItem)
 
@@ -161,6 +161,19 @@ export class TaskStore {
     newColumn[destination.droppableId] = newDestinationColumn
 
     this.columns = newColumn
+
+    this.saveStore()
+  }
+
+  public onDragColumnEnded = (source: DraggableLocation, destination: DraggableLocation, draggableId: string): void => {
+    const newBoard = cloneDeep(this.boards)
+
+    const [draggedId] = newBoard[source.droppableId].columnIds.splice(source.index, 1)
+
+    if (draggedId !== draggableId) return
+    newBoard[source.droppableId].columnIds.splice(destination.index, 0, draggableId)
+
+    this.boards = newBoard
 
     this.saveStore()
   }
