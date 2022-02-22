@@ -1,21 +1,23 @@
-import { useEffect, useState } from 'react'
-import { Box, Button, FormControl, InputLabel, MenuItem, SelectChangeEvent, Typography, Select } from '@mui/material'
-import { DragDropContext, Droppable, DroppableProvided, type DropResult } from 'react-beautiful-dnd'
+import { useEffect, useState, useMemo } from 'react'
+import { DragDropContext, type DropResult } from 'react-beautiful-dnd'
 import { observer } from 'mobx-react-lite'
 
 import { taskStore } from 'stores/taskStore'
 
 import type { BoardData } from 'types/types'
 
-import { TaskColumn } from 'views/pages/homepage/components/TaskColumn/TaskColumn'
-import { NameDialog } from 'views/pages/homepage/components/NameDialog/NameDialog'
+import { ColumnSection } from './contents/ColumnSection/ColumnSection'
+import { HeaderSection } from './contents/HeaderSection/HeaderSection'
 
-import { Root, Header, SelectBoard, ColumnContainer } from './HomePage.components'
+import { Root } from './HomePage.components'
 
 export const HomePage = observer(() => {
   const [isBrowser, setIsBrowser] = useState(false)
   const [selectedBoard, setSelectedBoard] = useState<string | undefined>()
 
+  /**
+   * handle
+   */
   const handleOnDragEnd = (result: DropResult) => {
     const { destination, source, draggableId, type } = result
     if (!destination || !source || !draggableId) return
@@ -27,18 +29,10 @@ export const HomePage = observer(() => {
     }
   }
 
-  const handleCreateNewBoard = (name: string) => {
-    const newBoardId = taskStore.createNewBoard(name)
-    setSelectedBoard(newBoardId)
-  }
-
-  const handleBoardChange = (event: SelectChangeEvent) => {
-    setSelectedBoard(event.target.value)
-  }
-
   /**
    * useEffect
    */
+
   useEffect(() => {
     setIsBrowser(process.browser)
   }, [])
@@ -54,68 +48,23 @@ export const HomePage = observer(() => {
   }, [taskStore.isReady])
 
   /**
+   * useMemo
+   */
+
+  const showColumn: boolean = useMemo(() => {
+    return Object.keys(taskStore.boards).length >= 0 && !!selectedBoard
+  }, [taskStore.boards])
+
+  /**
    * UI
    */
   return (
     <Root>
-      {Object.keys(taskStore.boards).length === 0 ? (
-        <Header>
-          <Button onClick={() => NameDialog({ topic: 'Create new board', onConfirm: handleCreateNewBoard })}>
-            Create New Board
-          </Button>
-        </Header>
-      ) : isBrowser ? (
+      {isBrowser ? (
         <DragDropContext onDragEnd={handleOnDragEnd}>
-          <Header>
-            {selectedBoard && (
-              <FormControl>
-                <InputLabel id="select-board-label">Board</InputLabel>
-                <SelectBoard
-                  labelId="select-board-label"
-                  value={selectedBoard}
-                  label="Board"
-                  onChange={handleBoardChange}
-                >
-                  {Object.keys(taskStore.boards).map((boardId) => (
-                    <MenuItem value={boardId} key={boardId}>
-                      {taskStore.boards[boardId]?.label}
-                    </MenuItem>
-                  ))}
-                </SelectBoard>
-              </FormControl>
-            )}
-            <Button
-              onClick={() => NameDialog({ topic: 'Create new board', onConfirm: handleCreateNewBoard })}
-              sx={{ marginLeft: 2 }}
-            >
-              New Board
-            </Button>
-          </Header>
+          <HeaderSection selectedBoard={selectedBoard} onSelectBoard={setSelectedBoard} />
 
-          <ColumnContainer>
-            {selectedBoard && (
-              <Droppable droppableId={selectedBoard} type="column" direction="horizontal">
-                {(provided: DroppableProvided) => (
-                  <Box
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    sx={{ display: 'flex', flexDirection: 'row' }}
-                  >
-                    {selectedBoard &&
-                      taskStore.boards[selectedBoard].columnIds.map((columnId, columnIndex) => (
-                        <TaskColumn
-                          columnId={columnId}
-                          key={columnId}
-                          columnIndex={columnIndex}
-                          currentBoardId={selectedBoard}
-                        />
-                      ))}
-                    <TaskColumn columnType="create" columnId={''} columnIndex={9999} currentBoardId={selectedBoard} />
-                  </Box>
-                )}
-              </Droppable>
-            )}
-          </ColumnContainer>
+          {showColumn ? <ColumnSection selectedBoard={selectedBoard!} /> : null}
         </DragDropContext>
       ) : null}
     </Root>
