@@ -1,4 +1,5 @@
 import { FormControl, InputLabel, MenuItem, type SelectChangeEvent } from '@mui/material'
+import { Add } from '@mui/icons-material'
 import { observer } from 'mobx-react-lite'
 
 import { taskStore } from 'stores/taskStore'
@@ -37,8 +38,11 @@ export const HeaderSection = observer(({ selectedBoard, onSelectBoard }: Props) 
         </FormControl>
       )}
 
-      <NewBoardButton onClick={() => NameDialog({ topic: 'Create new board', onConfirm: handleCreateNewBoard })}>
-        New Board
+      <NewBoardButton
+        onClick={() => NameDialog({ topic: 'Create new board', onConfirm: handleCreateNewBoard })}
+        variant="contained"
+      >
+        <Add />
       </NewBoardButton>
     </Header>
   )

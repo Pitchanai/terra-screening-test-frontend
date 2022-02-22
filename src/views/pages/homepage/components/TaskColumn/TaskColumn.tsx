@@ -1,6 +1,7 @@
 import { Droppable, Draggable, type DroppableProvided, type DraggableProvided } from 'react-beautiful-dnd'
 import { observer } from 'mobx-react-lite'
 import { Box, Button, Menu, MenuItem, Typography } from '@mui/material'
+import { Add, MoreVert } from '@mui/icons-material'
 import { useMemo, useState, type MouseEvent } from 'react'
 
 import { taskStore } from 'stores/taskStore'
@@ -11,7 +12,7 @@ import { TaskCard } from 'views/pages/homepage/components/TaskCard/TaskCard'
 import { TaskDialog, type OnConfirmProps } from 'views/pages/homepage/components/TaskDialog/TaskDialog'
 import { NameDialog } from 'views/pages/homepage/components/NameDialog/NameDialog'
 
-import { Root, TaskContainer, TitleContainer } from './TaskColumn.components'
+import { Root, TaskContainer, TitleContainer, RootNewColumn, NewColumnContainer } from './TaskColumn.components'
 
 export type Props = {
   columnType?: 'create' | 'default'
@@ -26,6 +27,10 @@ export const TaskColumn = observer(({ columnType = 'default', columnId, columnIn
   const tasks: TaskData[] = useMemo(() => {
     return taskStore.columns[columnId]?.tasks ?? []
   }, [taskStore.columns, columnId])
+
+  /**
+   * Handle Functions
+   */
 
   const handleCreateTask = ({ name, description, isOpen }: OnConfirmProps) => {
     taskStore.createNewTask(name, description, isOpen, columnId)
@@ -68,30 +73,41 @@ export const TaskColumn = observer(({ columnType = 'default', columnId, columnIn
   }
 
   return columnType === 'create' ? (
-    <Root>
-      <Typography>Create new column</Typography>
-      <Button onClick={() => NameDialog({ topic: 'Create new column', onConfirm: handleCreateNewColumn })}>
-        Create
-      </Button>
-    </Root>
+    // <Root>
+    <RootNewColumn>
+      <NewColumnContainer onClick={() => NameDialog({ topic: 'Create new column', onConfirm: handleCreateNewColumn })}>
+        <Typography variant="h6">Create new column</Typography>
+        <Add />
+      </NewColumnContainer>
+    </RootNewColumn>
   ) : (
+    // </Root>
     <Draggable draggableId={columnId} index={columnIndex}>
       {(provided: DraggableProvided) => (
         <Root ref={provided.innerRef} {...provided.draggableProps}>
           <TitleContainer {...provided.dragHandleProps}>
-            <Typography>Name: {taskStore.columns[columnId]?.label}</Typography>
-            <Button onClick={() => TaskDialog({ onConfirm: handleCreateTask })}>Create task</Button>
-            <Button onClick={handleManageMenu}>Manage</Button>
-            <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={handleCloseMenu}>
-              <MenuItem onClick={handleRemoveColumn} disabled={tasks.length > 0}>
-                <Box>
-                  <Typography>Remove Column</Typography>
-                  {tasks.length > 0 ? <Typography variant="body2">This column need to be empty.</Typography> : null}
-                </Box>
-              </MenuItem>
-              <MenuItem onClick={handleRenameColumn}>Rename</MenuItem>
-              {/* <MenuItem onClick={}>Remove Column</MenuItem> */}
-            </Menu>
+            <Box>
+              <Typography sx={{ fontWeight: 'bold' }}>{taskStore.columns[columnId]?.label}</Typography>
+            </Box>
+            <Box sx={{ display: 'flex', columnGap: 1 }}>
+              <Button onClick={() => TaskDialog({ onConfirm: handleCreateTask })} color="secondary">
+                <Add />
+              </Button>
+
+              <Button onClick={handleManageMenu} color="secondary">
+                <MoreVert />
+              </Button>
+              <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={handleCloseMenu}>
+                <MenuItem onClick={handleRemoveColumn} disabled={tasks.length > 0}>
+                  <Box>
+                    <Typography>Remove Column</Typography>
+                    {tasks.length > 0 ? <Typography variant="body2">This column need to be empty.</Typography> : null}
+                  </Box>
+                </MenuItem>
+                <MenuItem onClick={handleRenameColumn}>Rename</MenuItem>
+                {/* <MenuItem onClick={}>Remove Column</MenuItem> */}
+              </Menu>
+            </Box>
           </TitleContainer>
 
           <Droppable droppableId={columnId} type="task">
