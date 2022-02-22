@@ -8,7 +8,7 @@ import { taskStore } from 'stores/taskStore'
 import type { BoardData } from 'types/types'
 
 import { TaskColumn } from 'views/pages/homepage/components/TaskColumn/TaskColumn'
-import { CreateNewDialog } from 'views/pages/homepage/components/CreateNewDialog/CreateNewDialog'
+import { NameDialog } from 'views/pages/homepage/components/NameDialog/NameDialog'
 
 import { Root, Header, SelectBoard, ColumnContainer } from './HomePage.components'
 
@@ -60,7 +60,7 @@ export const HomePage = observer(() => {
     <Root>
       {Object.keys(taskStore.boards).length === 0 ? (
         <Header>
-          <Button onClick={() => CreateNewDialog({ type: 'board', onConfirm: handleCreateNewBoard })}>
+          <Button onClick={() => NameDialog({ topic: 'Create new board', onConfirm: handleCreateNewBoard })}>
             Create New Board
           </Button>
         </Header>
@@ -85,7 +85,7 @@ export const HomePage = observer(() => {
               </FormControl>
             )}
             <Button
-              onClick={() => CreateNewDialog({ type: 'board', onConfirm: handleCreateNewBoard })}
+              onClick={() => NameDialog({ topic: 'Create new board', onConfirm: handleCreateNewBoard })}
               sx={{ marginLeft: 2 }}
             >
               New Board

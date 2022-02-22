@@ -147,33 +147,61 @@ export class TaskStore {
   }
 
   public onDragTaskEnded = (source: DraggableLocation, destination: DraggableLocation, draggableId: string): void => {
-    const newColumn = cloneDeep(this.columns)
-    const newSourceColumn = newColumn[source.droppableId]
+    const newColumns = cloneDeep(this.columns)
+    const newSourceColumn = newColumns[source.droppableId]
     const sameColumn = source.droppableId === destination.droppableId
-    const newDestinationColumn = sameColumn ? newSourceColumn : newColumn[destination.droppableId]
+    const newDestinationColumn = sameColumn ? newSourceColumn : newColumns[destination.droppableId]
 
     const [draggedItem] = newSourceColumn.tasks.splice(source.index, 1)
 
     if (draggedItem.id !== draggableId) return
     newDestinationColumn.tasks.splice(destination.index, 0, draggedItem)
 
-    newColumn[source.droppableId] = newSourceColumn
-    newColumn[destination.droppableId] = newDestinationColumn
+    newColumns[source.droppableId] = newSourceColumn
+    newColumns[destination.droppableId] = newDestinationColumn
 
-    this.columns = newColumn
+    this.columns = newColumns
 
     this.saveStore()
   }
 
   public onDragColumnEnded = (source: DraggableLocation, destination: DraggableLocation, draggableId: string): void => {
-    const newBoard = cloneDeep(this.boards)
+    const newBoards = cloneDeep(this.boards)
 
-    const [draggedId] = newBoard[source.droppableId].columnIds.splice(source.index, 1)
+    const [draggedId] = newBoards[source.droppableId].columnIds.splice(source.index, 1)
 
     if (draggedId !== draggableId) return
-    newBoard[source.droppableId].columnIds.splice(destination.index, 0, draggableId)
+    newBoards[source.droppableId].columnIds.splice(destination.index, 0, draggableId)
 
-    this.boards = newBoard
+    this.boards = newBoards
+
+    this.saveStore()
+  }
+
+  public editColumnName = (columnId: string, name: string) => {
+    const newColumns = cloneDeep(this.columns)
+
+    newColumns[columnId].label = name
+
+    this.columns = newColumns
+
+    this.saveStore()
+  }
+
+  public deleteColumn = (columnId: string, boardId: string) => {
+    const newColumns = cloneDeep(this.columns)
+    const newBoards = cloneDeep(this.boards)
+
+    if (newColumns[columnId].tasks.length !== 0) return
+
+    delete newColumns[columnId]
+
+    const deleteIndex = newBoards[boardId].columnIds.findIndex((v) => v === columnId)
+    if (deleteIndex < 0) return
+    newBoards[boardId].columnIds.splice(deleteIndex, 1)
+
+    this.columns = newColumns
+    this.boards = newBoards
 
     this.saveStore()
   }
