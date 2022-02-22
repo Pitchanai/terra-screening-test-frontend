@@ -53,7 +53,7 @@ export const HomePage = observer(() => {
 
   const showColumn: boolean = useMemo(() => {
     return Object.keys(taskStore.boards).length >= 0 && !!selectedBoard
-  }, [taskStore.boards])
+  }, [taskStore.boards, selectedBoard])
 
   /**
    * UI

@@ -76,8 +76,8 @@ export const TaskColumn = observer(({ columnType = 'default', columnId, columnIn
     // <Root>
     <RootNewColumn>
       <NewColumnContainer onClick={() => NameDialog({ topic: 'Create new column', onConfirm: handleCreateNewColumn })}>
-        <Typography variant="h6">Create new column</Typography>
         <Add />
+        <Typography variant="h6">Create new column</Typography>
       </NewColumnContainer>
     </RootNewColumn>
   ) : (
@@ -105,7 +105,6 @@ export const TaskColumn = observer(({ columnType = 'default', columnId, columnIn
                   </Box>
                 </MenuItem>
                 <MenuItem onClick={handleRenameColumn}>Rename</MenuItem>
-                {/* <MenuItem onClick={}>Remove Column</MenuItem> */}
               </Menu>
             </Box>
           </TitleContainer>
@@ -115,8 +114,14 @@ export const TaskColumn = observer(({ columnType = 'default', columnId, columnIn
               <TaskContainer {...provided.droppableProps} ref={provided.innerRef}>
                 {tasks.map((task, index) => (
                   <Draggable key={task.id} draggableId={task.id} index={index}>
-                    {(provided: DraggableProvided) => (
-                      <TaskCard provided={provided} task={task} taskIndex={index} columnId={columnId} />
+                    {(provided: DraggableProvided, { isDragging }) => (
+                      <TaskCard
+                        provided={provided}
+                        task={task}
+                        taskIndex={index}
+                        columnId={columnId}
+                        isDragging={isDragging}
+                      />
                     )}
                   </Draggable>
                 ))}

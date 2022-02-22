@@ -1,16 +1,19 @@
 import { Box, styled } from '@mui/material'
 import { grey } from '@mui/material/colors'
 
-export const Root = styled(Box)(({ theme }) => ({
+const shouldForwardProp = (props: string) => !['isDragging'].includes(props)
+export const Root = styled(Box, { shouldForwardProp })<{ isDragging: boolean }>(({ theme, isDragging }) => ({
   display: 'flex',
   flexDirection: 'column',
   rowGap: theme.spacing(1),
-  background: grey[50],
+  background: isDragging ? 'rgba(255, 255, 255, 0.6)' : grey[50],
   borderRadius: 16,
   padding: theme.spacing(2),
   marginBottom: theme.spacing(1),
   transition: 'all 0.4s ease',
-  transitionProperty: ['background', 'box-shadow'].join(','),
+  backdropFilter: isDragging ? 'blur(8px)' : '',
+  boxShadow: isDragging ? theme.shadows[2] : '',
+  transitionProperty: ['background', 'box-shadow', 'backdrop-filter'].join(','),
   '&:hover': {
     background: 'white',
     boxShadow: theme.shadows[5],

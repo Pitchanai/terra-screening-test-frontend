@@ -14,9 +14,10 @@ export type Props = {
   taskIndex: number
   columnId: string
   provided: DraggableProvided
+  isDragging: boolean
 }
 
-export const TaskCard = ({ task, taskIndex, columnId, provided }: Props) => {
+export const TaskCard = ({ task, taskIndex, columnId, provided, isDragging }: Props) => {
   const handleEditTask = ({ name, description, isOpen }: OnConfirmProps) => {
     taskStore.editTask(name, description, isOpen, columnId, taskIndex, task.id)
   }
@@ -31,6 +32,7 @@ export const TaskCard = ({ task, taskIndex, columnId, provided }: Props) => {
       {...provided.draggableProps}
       {...provided.dragHandleProps}
       onClick={() => TaskDialog({ task, onConfirm: handleEditTask, onArchive: handleArchiveTask })}
+      isDragging={isDragging}
     >
       <TitleContainer>
         <Typography>{task.name}</Typography>
