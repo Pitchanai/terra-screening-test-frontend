@@ -19,12 +19,16 @@ export const TaskCard = ({ task, taskIndex, columnId, provided }: Props) => {
     taskStore.editTask(name, description, isOpen, columnId, taskIndex, task.id)
   }
 
+  const handleArchiveTask = () => {
+    taskStore.archiveTask(columnId, task.id, taskIndex)
+  }
+
   return (
     <Box
       ref={provided.innerRef}
       {...provided.draggableProps}
       {...provided.dragHandleProps}
-      onClick={() => TaskDialog({ task, onConfirm: handleEditTask })}
+      onClick={() => TaskDialog({ task, onConfirm: handleEditTask, onArchive: handleArchiveTask })}
     >
       <Typography>{task.name}</Typography>
       <Typography variant="body2">{task.description}</Typography>

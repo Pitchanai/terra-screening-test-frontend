@@ -3,22 +3,25 @@ import { v4 as uuid } from 'uuid'
 import { cloneDeep } from 'lodash'
 import type { DraggableLocation } from 'react-beautiful-dnd'
 
-import { ColumnData, BoardData } from 'types/types'
+import { ColumnData, BoardData, TaskData } from 'types/types'
 
 const BOARD_DATA_KEY = 'BOARD_DATA'
 const COLUMN_DATA_KEY = 'COLUMN_DATA'
+const ARCHIVED_TASK_KEY = 'ARCHIVED_TASK'
 
 export class TaskStore {
   isReady: boolean
 
   columns: Record<string, ColumnData> // Record<uuid, TaskData>
   boards: Record<string, BoardData> // Record<uuid, BoardData>
+  archivedTasks: TaskData[]
 
   constructor() {
     this.isReady = false
 
     this.columns = {}
     this.boards = {}
+    this.archivedTasks = []
 
     makeAutoObservable(this)
   }
@@ -27,6 +30,8 @@ export class TaskStore {
     try {
       const loadedBoardData: Record<string, BoardData> = JSON.parse(localStorage.getItem(BOARD_DATA_KEY) ?? '{}')
       const updatedBoardData = {}
+
+      const loadedArchivedTask: TaskData[] = JSON.parse(localStorage.getItem(ARCHIVED_TASK_KEY) ?? '[]')
 
       for (const [key, value] of Object.entries(loadedBoardData)) {
         updatedBoardData[key] = {
@@ -45,7 +50,10 @@ export class TaskStore {
         }
       }
 
+      const updatedArchivedTask = loadedArchivedTask.map((v) => ({ ...v, created: new Date(v.created) }))
+
       this.boards = updatedBoardData
+      this.archivedTasks = updatedArchivedTask
     } catch (e) {
       console.error(e)
       this.boards = {}
@@ -57,6 +65,7 @@ export class TaskStore {
 
   private saveStore = () => {
     localStorage.setItem(BOARD_DATA_KEY, JSON.stringify(this.boards))
+    localStorage.setItem(ARCHIVED_TASK_KEY, JSON.stringify(this.archivedTasks))
 
     for (const [key, value] of Object.entries(this.columns)) {
       const columnKey = `${COLUMN_DATA_KEY}:${key}`
@@ -142,6 +151,21 @@ export class TaskStore {
     }
 
     this.columns = newColumns
+
+    this.saveStore()
+  }
+
+  public archiveTask = (columnId: string, taskId: string, taskIndex: number) => {
+    const newColumns = cloneDeep(this.columns)
+    const newArchivedTasks = cloneDeep(this.archivedTasks)
+
+    if (newColumns[columnId].tasks[taskIndex].id !== taskId) return
+
+    newArchivedTasks.push(newColumns[columnId].tasks[taskIndex])
+    newColumns[columnId].tasks.splice(taskIndex, 1)
+
+    this.columns = newColumns
+    this.archivedTasks = newArchivedTasks
 
     this.saveStore()
   }
