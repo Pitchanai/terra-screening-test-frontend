@@ -28,6 +28,7 @@ export const TaskCard = ({ task, taskIndex, columnId, provided }: Props) => {
     >
       <Typography>{task.name}</Typography>
       <Typography variant="body2">{task.description}</Typography>
+      <Typography color={task.status === 'open' ? 'green' : 'red'}>{task.status}</Typography>
     </Box>
   )
 }
