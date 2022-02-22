@@ -123,6 +123,30 @@ export class TaskStore {
     return newUuid
   }
 
+  public editTask = (
+    name: string,
+    description: string,
+    isOpen: boolean,
+    columnId: string,
+    taskIndex: number,
+    taskId: string,
+  ) => {
+    const newColumns = cloneDeep(this.columns)
+
+    if (newColumns[columnId].tasks[taskIndex].id !== taskId) return
+
+    newColumns[columnId].tasks[taskIndex] = {
+      ...newColumns[columnId].tasks[taskIndex],
+      name,
+      description,
+      status: isOpen ? 'open' : 'closed',
+    }
+
+    this.columns = newColumns
+
+    this.saveStore()
+  }
+
   public onDragEnded = (source: DraggableLocation, destination: DraggableLocation, draggableId: string): void => {
     const newColumn = cloneDeep(this.columns)
     const newSourceColumn = newColumn[source.droppableId]

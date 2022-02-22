@@ -2,16 +2,14 @@ import { Droppable, Draggable, type DroppableProvided, type DraggableProvided } 
 import { observer } from 'mobx-react-lite'
 import { Box, Button, Typography } from '@mui/material'
 
+import { taskStore } from 'stores/taskStore'
+
 import type { TaskData } from 'types/types'
 
 import { TaskCard } from 'views/pages/homepage/components/TaskCard/TaskCard'
-import {
-  CreateTaskDialog,
-  type OnConfirmProps,
-} from 'views/pages/homepage/components/CreateTaskDialog/CreateTaskDialog'
+import { TaskDialog, type OnConfirmProps } from 'views/pages/homepage/components/TaskDialog/TaskDialog'
 
 import { Root } from './TaskColumn.components'
-import { taskStore } from 'stores/taskStore'
 
 export type Props = {
   columnId: string
@@ -23,19 +21,19 @@ export const TaskColumn = observer(({ columnId, tasks }: Props) => {
     taskStore.createNewTask(name, description, isOpen, columnId)
   }
 
-  console.log(taskStore.columns)
-
   return (
     <Droppable droppableId={columnId}>
       {(provided: DroppableProvided) => (
         <Root {...provided.droppableProps} ref={provided.innerRef}>
           <Box>
             <Typography>Name: {taskStore.columns[columnId]?.label}</Typography>
-            <Button onClick={() => CreateTaskDialog({ onConfirm: handleCreateTask })}>Create task</Button>
+            <Button onClick={() => TaskDialog({ onConfirm: handleCreateTask })}>Create task</Button>
           </Box>
           {tasks.map((task, index) => (
             <Draggable key={task.id} draggableId={task.id} index={index}>
-              {(provided: DraggableProvided) => <TaskCard provided={provided} task={task} />}
+              {(provided: DraggableProvided) => (
+                <TaskCard provided={provided} task={task} taskIndex={index} columnId={columnId} />
+              )}
             </Draggable>
           ))}
           {provided.placeholder}

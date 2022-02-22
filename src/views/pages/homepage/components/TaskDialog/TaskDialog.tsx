@@ -3,6 +3,8 @@ import { useState } from 'react'
 
 import { dialogStore } from 'stores/dialogStore'
 
+import type { TaskData } from 'types/types'
+
 export type OnConfirmProps = {
   name: string
   description: string
@@ -10,14 +12,15 @@ export type OnConfirmProps = {
 }
 
 export type Props = {
+  task?: TaskData
   onConfirm: (value: OnConfirmProps) => void
 }
 
-export const CreateTaskDialog = ({ onConfirm }: Props) => {
+export const TaskDialog = ({ task, onConfirm }: Props) => {
   dialogStore.open(() => {
-    const [name, setName] = useState('')
-    const [description, setDescription] = useState('')
-    const [isOpen, setIsOpen] = useState(true)
+    const [name, setName] = useState(task?.name ?? '')
+    const [description, setDescription] = useState(task?.description ?? '')
+    const [isOpen, setIsOpen] = useState(task?.status === 'closed' ? false : true) // If task === undefined, isOpen will be true
 
     const onConfirmCreate = () => {
       dialogStore.close()
