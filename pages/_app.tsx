@@ -9,6 +9,7 @@ import { useSetup } from 'hooks/useSetup'
 import { theme } from 'themes/default'
 
 import { GlobalDialog } from 'views/common/GlobalDialog/GlobalDialog'
+import { GlobalNotification } from 'views/common/GlobalNotification/GlobalNotification'
 
 function MyApp({ Component, pageProps }: AppProps) {
   const { isReady: _ } = useSetup()
@@ -20,6 +21,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <ThemeProvider theme={theme}>
         <GlobalDialog />
+        <GlobalNotification />
         <Component {...pageProps} />
       </ThemeProvider>
     </>

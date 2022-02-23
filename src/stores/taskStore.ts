@@ -5,6 +5,8 @@ import type { DraggableLocation } from 'react-beautiful-dnd'
 
 import { ColumnData, BoardData, TaskData } from 'types/types'
 
+import { notificationStore } from 'stores/notificationStore'
+
 const BOARD_DATA_KEY = 'BOARD_DATA'
 const COLUMN_DATA_KEY = 'COLUMN_DATA'
 const ARCHIVED_TASK_KEY = 'ARCHIVED_TASK'
@@ -127,6 +129,8 @@ export class TaskStore {
     this.columns = newColumns
 
     this.saveStore()
+
+    notificationStore.show('Task created!')
 
     return newUuid
   }
