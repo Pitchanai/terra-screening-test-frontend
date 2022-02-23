@@ -12,12 +12,21 @@ export const Root = styled(Box)(({ theme }) => ({
   background: blueGrey[100],
   borderRadius: 16,
   marginRight: theme.spacing(2),
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+    overflowY: 'unset',
+    marginBottom: theme.spacing(2),
+  },
 }))
 
-export const RootNewColumn = styled(Box)(() => ({
+export const RootNewColumn = styled(Box)(({ theme }) => ({
   width: 300,
   display: 'flex',
   justifyContent: 'center',
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+    paddingBottom: theme.spacing(4),
+  },
 }))
 
 export const NewColumnContainer = styled(Box)(({ theme }) => ({
@@ -54,4 +63,12 @@ export const TitleContainer = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),
   background: blueGrey[600],
   color: 'white',
+  borderRadius: '16px 16px 0 0',
+}))
+
+export const NoTaskContainer = styled(Box)(() => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: 100,
 }))

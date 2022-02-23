@@ -12,7 +12,14 @@ import { TaskCard } from 'views/pages/homepage/components/TaskCard/TaskCard'
 import { TaskDialog, type OnConfirmProps } from 'views/pages/homepage/components/TaskDialog/TaskDialog'
 import { NameDialog } from 'views/pages/homepage/components/NameDialog/NameDialog'
 
-import { Root, TaskContainer, TitleContainer, RootNewColumn, NewColumnContainer } from './TaskColumn.components'
+import {
+  Root,
+  TaskContainer,
+  TitleContainer,
+  RootNewColumn,
+  NewColumnContainer,
+  NoTaskContainer,
+} from './TaskColumn.components'
 
 export type Props = {
   columnType?: 'create' | 'default'
@@ -73,7 +80,6 @@ export const TaskColumn = observer(({ columnType = 'default', columnId, columnIn
   }
 
   return columnType === 'create' ? (
-    // <Root>
     <RootNewColumn>
       <NewColumnContainer onClick={() => NameDialog({ topic: 'Create new column', onConfirm: handleCreateNewColumn })}>
         <Add />
@@ -81,7 +87,6 @@ export const TaskColumn = observer(({ columnType = 'default', columnId, columnIn
       </NewColumnContainer>
     </RootNewColumn>
   ) : (
-    // </Root>
     <Draggable draggableId={columnId} index={columnIndex}>
       {(provided: DraggableProvided) => (
         <Root ref={provided.innerRef} {...provided.draggableProps}>
@@ -112,19 +117,25 @@ export const TaskColumn = observer(({ columnType = 'default', columnId, columnIn
           <Droppable droppableId={columnId} type="task">
             {(provided: DroppableProvided) => (
               <TaskContainer {...provided.droppableProps} ref={provided.innerRef}>
-                {tasks.map((task, index) => (
-                  <Draggable key={task.id} draggableId={task.id} index={index}>
-                    {(provided: DraggableProvided, { isDragging }) => (
-                      <TaskCard
-                        provided={provided}
-                        task={task}
-                        taskIndex={index}
-                        columnId={columnId}
-                        isDragging={isDragging}
-                      />
-                    )}
-                  </Draggable>
-                ))}
+                {tasks.length === 0 ? (
+                  <NoTaskContainer>
+                    <Typography variant="body1">No tasks</Typography>
+                  </NoTaskContainer>
+                ) : (
+                  tasks.map((task, index) => (
+                    <Draggable key={task.id} draggableId={task.id} index={index}>
+                      {(provided: DraggableProvided, { isDragging }) => (
+                        <TaskCard
+                          provided={provided}
+                          task={task}
+                          taskIndex={index}
+                          columnId={columnId}
+                          isDragging={isDragging}
+                        />
+                      )}
+                    </Draggable>
+                  ))
+                )}
                 {provided.placeholder}
               </TaskContainer>
             )}

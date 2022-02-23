@@ -3,7 +3,7 @@ import { useState, type KeyboardEvent } from 'react'
 
 import { dialogStore } from 'stores/dialogStore'
 
-import { Title, Content } from './NameDialog.components'
+import { Root, Title, Content } from './NameDialog.components'
 
 export type Props = {
   topic: string
@@ -33,7 +33,7 @@ export const NameDialog = ({ topic, defaultValue, onConfirm }: Props) => {
     }
 
     return (
-      <Box sx={{ width: 400 }}>
+      <Root>
         <Title height="44">
           <Typography variant="h6">{topic}</Typography>
         </Title>
@@ -55,7 +55,7 @@ export const NameDialog = ({ topic, defaultValue, onConfirm }: Props) => {
             </Button>
           </Box>
         </Content>
-      </Box>
+      </Root>
     )
   })
 }

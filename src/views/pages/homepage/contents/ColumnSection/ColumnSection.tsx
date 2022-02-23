@@ -2,6 +2,8 @@ import { Droppable, DroppableProvided } from 'react-beautiful-dnd'
 
 import { taskStore } from 'stores/taskStore'
 
+import { useBreakpoints } from 'views/hooks/useBreakpoints'
+
 import { TaskColumn } from 'views/pages/homepage/components/TaskColumn/TaskColumn'
 
 import { ColumnContainer, ColumnContent } from './ColumnSection.components'
@@ -11,9 +13,11 @@ type Props = {
 }
 
 export const ColumnSection = ({ selectedBoard }: Props) => {
+  const { downSm } = useBreakpoints()
+
   return (
     <ColumnContainer>
-      <Droppable droppableId={selectedBoard!} type="column" direction="horizontal">
+      <Droppable droppableId={selectedBoard!} type="column" direction={downSm ? 'vertical' : 'horizontal'}>
         {(provided: DroppableProvided) => (
           <ColumnContent {...provided.droppableProps} ref={provided.innerRef}>
             {taskStore.boards[selectedBoard!].columnIds.map((columnId, columnIndex) => (

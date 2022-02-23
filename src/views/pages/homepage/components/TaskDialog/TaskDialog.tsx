@@ -1,11 +1,11 @@
-import { Box, Button, TextField, Typography, Switch, Chip } from '@mui/material'
+import { Button, TextField, Typography, Switch, Chip } from '@mui/material'
 import { useState } from 'react'
 
 import { dialogStore } from 'stores/dialogStore'
 
 import type { TaskData } from 'types/types'
 
-import { Title, Content, ButtonContainer, StatucContainer } from './TaskDialog.components'
+import { Root, Title, Content, ButtonContainer, StatucContainer } from './TaskDialog.components'
 
 export type OnConfirmProps = {
   name: string
@@ -43,7 +43,7 @@ export const TaskDialog = ({ task, onConfirm, onArchive }: Props) => {
     }
 
     return (
-      <Box sx={{ width: 400 }}>
+      <Root>
         <Title>
           <Typography variant="h6">{!!task ? 'Edit' : 'Create'} new task</Typography>
         </Title>
@@ -85,7 +85,7 @@ export const TaskDialog = ({ task, onConfirm, onArchive }: Props) => {
             </Button>
           </ButtonContainer>
         </Content>
-      </Box>
+      </Root>
     )
   })
 }
