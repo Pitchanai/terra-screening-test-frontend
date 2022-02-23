@@ -13,5 +13,6 @@ export const ColumnContent = styled(Box)(({ theme }) => ({
   flexDirection: 'row',
   [theme.breakpoints.down('sm')]: {
     flexDirection: 'column',
+    width: '100%',
   },
 }))
