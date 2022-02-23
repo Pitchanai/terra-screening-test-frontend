@@ -18,8 +18,8 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Head>
         <title>Jira</title>
       </Head>
-      <GlobalDialog />
       <ThemeProvider theme={theme}>
+        <GlobalDialog />
         <Component {...pageProps} />
       </ThemeProvider>
     </>

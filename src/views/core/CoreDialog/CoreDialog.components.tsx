@@ -1,20 +1,24 @@
 import { Button, Dialog, styled } from '@mui/material'
+import { blueGrey } from '@mui/material/colors'
 
 export const StyledCloseButton = styled(Button)(() => ({
   minWidth: 0,
-  width: '36px !important',
-  height: '36px !important',
+  width: '32px !important',
+  height: '32px !important',
   position: 'absolute',
-  top: 8,
-  right: 8,
+  top: 18,
+  right: 24,
   // transform: 'translate(50%, -50%)',
   boxSizing: 'border-box',
   borderRadius: '50%',
-  backgroundColor: '#3e3e3e',
+  backgroundColor: blueGrey[100],
+  color: blueGrey[700],
   zIndex: 100,
+  border: `solid 1px ${blueGrey[200]}`,
   '&:hover, &:focus': {
-    border: 'solid 1px #29b2ff',
-    backgroundColor: '#1e262d',
+    border: `solid 1px ${blueGrey[900]}`,
+    color: blueGrey[800],
+    backgroundColor: blueGrey[200],
   },
 }))
 
@@ -26,7 +30,6 @@ export const StyledDialog = styled(Dialog)(({ theme }) => ({
     flexDirection: 'column',
     alignItems: 'center',
     textAlign: 'center',
-    padding: '16px 8px',
     overflowY: 'scroll',
 
     [theme.breakpoints.down('xs')]: {

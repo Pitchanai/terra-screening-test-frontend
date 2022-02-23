@@ -1,9 +1,11 @@
-import { Box, Button, TextField, Typography, Switch } from '@mui/material'
+import { Box, Button, TextField, Typography, Switch, Chip } from '@mui/material'
 import { useState } from 'react'
 
 import { dialogStore } from 'stores/dialogStore'
 
 import type { TaskData } from 'types/types'
+
+import { Title, Content, ButtonContainer, StatucContainer } from './TaskDialog.components'
 
 export type OnConfirmProps = {
   name: string
@@ -23,6 +25,13 @@ export const TaskDialog = ({ task, onConfirm, onArchive }: Props) => {
     const [description, setDescription] = useState(task?.description ?? '')
     const [isOpen, setIsOpen] = useState(task?.status === 'closed' ? false : true) // If task === undefined, isOpen will be true
 
+    const [filled, setFilled] = useState(false)
+
+    const handleNameChange = (value: string) => {
+      if (!filled) setFilled(true)
+      setName(value)
+    }
+
     const handleConfirmCreate = () => {
       dialogStore.close()
       onConfirm({ name, description, isOpen })
@@ -34,25 +43,48 @@ export const TaskDialog = ({ task, onConfirm, onArchive }: Props) => {
     }
 
     return (
-      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <Typography>{!!task ? 'Edit' : 'Create'} new task</Typography>
-        {!!onArchive ? <Button onClick={handleArchiveTask}>Archive</Button> : null}
-        <TextField
-          type="text"
-          value={name}
-          label={<Typography>Name</Typography>}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <TextField
-          type="text"
-          value={description}
-          label={<Typography>Description</Typography>}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <Switch checked={isOpen} onChange={(e) => setIsOpen(e.target.checked)} />
-        <Button disabled={!name} onClick={handleConfirmCreate}>
-          Confirm
-        </Button>
+      <Box sx={{ width: 400 }}>
+        <Title>
+          <Typography variant="h6">{!!task ? 'Edit' : 'Create'} new task</Typography>
+        </Title>
+
+        <Content>
+          <TextField
+            type="text"
+            label="Name"
+            helperText="required"
+            fullWidth
+            autoFocus
+            error={!name && filled}
+            value={name}
+            onChange={(e) => handleNameChange(e.target.value)}
+          />
+
+          <TextField
+            type="text"
+            label="Description"
+            value={description}
+            fullWidth
+            multiline
+            rows={3}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+          <StatucContainer>
+            <Switch checked={isOpen} onChange={(e) => setIsOpen(e.target.checked)} />
+            <Chip label={`status: ${isOpen ? 'open' : 'closed'}`} color={isOpen ? 'success' : 'error'} size="small" />
+          </StatucContainer>
+
+          <ButtonContainer>
+            {!!onArchive ? (
+              <Button onClick={handleArchiveTask} variant="contained" color="error">
+                Archive
+              </Button>
+            ) : null}
+            <Button disabled={!name} onClick={handleConfirmCreate} variant="contained">
+              Confirm
+            </Button>
+          </ButtonContainer>
+        </Content>
       </Box>
     )
   })

@@ -36,6 +36,19 @@ theme.components = {
       },
     },
   },
+  MuiInput: {
+    styleOverrides: {},
+  },
+  MuiOutlinedInput: {
+    styleOverrides: {
+      root: {
+        padding: 'unset',
+      },
+      input: {
+        padding: 12,
+      },
+    },
+  },
 }
 
 export { theme }
