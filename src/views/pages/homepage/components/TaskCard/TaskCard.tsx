@@ -1,5 +1,5 @@
 import { DraggableProvided } from 'react-beautiful-dnd'
-import { Typography, Box, Chip } from '@mui/material'
+import { Typography, Chip } from '@mui/material'
 
 import { taskStore } from 'stores/taskStore'
 

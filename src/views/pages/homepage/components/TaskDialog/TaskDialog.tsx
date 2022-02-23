@@ -5,7 +5,7 @@ import { dialogStore } from 'stores/dialogStore'
 
 import type { TaskData } from 'types/types'
 
-import { Root, Title, Content, ButtonContainer, StatucContainer } from './TaskDialog.components'
+import { Root, Title, Content, ButtonContainer, StatusContainer } from './TaskDialog.components'
 
 export type OnConfirmProps = {
   name: string
@@ -69,10 +69,10 @@ export const TaskDialog = ({ task, onConfirm, onArchive }: Props) => {
             rows={3}
             onChange={(e) => setDescription(e.target.value)}
           />
-          <StatucContainer>
+          <StatusContainer>
             <Switch checked={isOpen} onChange={(e) => setIsOpen(e.target.checked)} />
             <Chip label={`status: ${isOpen ? 'open' : 'closed'}`} color={isOpen ? 'success' : 'error'} size="small" />
-          </StatucContainer>
+          </StatusContainer>
 
           <ButtonContainer>
             {!!onArchive ? (

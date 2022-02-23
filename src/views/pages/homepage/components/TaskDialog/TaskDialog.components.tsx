@@ -31,7 +31,7 @@ export const ButtonContainer = styled(Box)(({ theme }) => ({
   columnGap: theme.spacing(1),
 }))
 
-export const StatucContainer = styled(Box)(({ theme }) => ({
+export const StatusContainer = styled(Box)(() => ({
   display: 'flex',
   justifyContent: 'flex-start',
   alignItems: 'center',
